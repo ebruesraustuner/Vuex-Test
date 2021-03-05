@@ -54,6 +54,7 @@
     name: 'agelist',
     computed: {
       units() {
+        //return this.$store.getters.filterUnitsData("Feudal");
         return this.$store.getters.filteredUnits;
       },
     },
