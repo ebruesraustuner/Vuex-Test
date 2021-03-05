@@ -1,10 +1,14 @@
 <template>
     <div>
+        <ul class="filter">
+            <li><a @click="filtered('')">All</a></li>
+            <li><a @click="filtered('Feudal')">Feudal</a></li>
+            <li><a @click="filtered('Feudal')">Ali</a></li>
+            <li><a @click="filtered('Feudal')">veli</a></li>
+            <li><a @click="filtered('49-50')">49 - 50</a></li>
+        </ul>
         <div class="ages">
-            <div v-for="age in ages" :key="age">
-                {{age.name}}
-
-            </div>
+            {{logs()}}
         </div>
         <div class="tables">
             <div class="tables__left">
@@ -16,8 +20,8 @@
                         <th>Costs- wood</th>
                         <th> costs - gold</th>
                     </tr>
-                    <tr :key="index" v-for="(item, index) in units">
-                        <td v-if="!isSelectedUnit(item)" style="cursor:pointer" @click="addUnitSelection(item)">
+                    <tr :key="index" v-for="(item, index) in getUnits" @click="addUnitSelection(item)">
+                        <td v-if="!isSelectedUnit(item)" style="cursor:pointer" >
                             {{item.id}}</td>
                         <td v-else style="cursor:pointer;" @click="removeUnitSelection(item)"> {{item.id}}
                             <small>[x]</small></td>
@@ -48,7 +52,15 @@
         </div>
     </div>
 </template>
+
 <style lang="scss" scoped>
+    ul.filter {
+        li {
+            a {
+                cursor: pointer;
+            }
+        }
+    }
     .filters {
         display: flex;
 
@@ -102,17 +114,15 @@
 
         data() {
             return {
-
+                getUnits: {
+                    ...this.$store.state.units
+                }
             }
         },
-
         computed: {
             units() {
                 return this.$store.state.units;
-
             },
-            
-
         },
         methods: {
             addUnitSelection(unit) {
@@ -123,6 +133,14 @@
             },
             isSelectedUnit(unit) {
                 return this.$store.getters.isSelectedUnit(unit);
+            },
+            filtered(filter) {
+                return this.getUnits = {...this.$store.getters.filterUnitsData(filter)};
+                //const unit = {...this.$store.getters.filterUnitsData(filter)};
+                //this.$store.commit("filterUpdateUnit", [unit]);
+            },
+            logs() {
+                console.log(this.$store.state.units);
             }
         },
         mounted() {
