@@ -1,73 +1,54 @@
 <template>
-  <div>
-    <!-- filtrelenmiş liste -->
-    <table v-for="unit in units" :key="unit.age" style="width:100%">
-      <tr>
-        <th>ID:</th>
-        <td>{{ unit.id }}</td>
-      </tr>
-      <tr>
-        <th>Name:</th>
-        <td>{{ unit.name }}</td>
-      </tr>
-      <tr>
-        <th>Description:</th>
-        <td>{{unit.description}}</td>
-      </tr>
-      <tr>
-        <th>Min. Required Age</th>
-        <td>{{unit.age}}</td>
-      </tr>
-      <tr>
-        <th>Wood Cost</th>
-        <td><div v-for="cost in unit.cost" :key="cost">{{cost}}</div></td>
-      </tr>
-      <tr>
-        <th>Gold Cost:</th>
-        <td><div v-for="cost in unit.cost" :key="cost">{{cost}}</div></td>
-      </tr>
-      <tr>
-        <th>Build Time:</th>
-        <td>{{unit.build_time}}</td>
-      </tr>
-      <tr>
-        <th>Reload Time:</th>
-        <td>{{unit.reload_time}}</td>
-      </tr>
-      <tr>
-        <th>Hit Points:</th>
-        <td>{{unit.hit_points}}</td>
-      </tr>
-      <tr>
-        <th>Attack:</th>
-        <td>{{unit.attack}}</td>
-      </tr>
-      <tr>
-        <th>Accuracy:</th>
-        <td>{{unit.accuracy}}</td>
-      </tr>
-    </table>
-  </div>
+    <div>
+         <div class="filters__unit">
+            <div> </div>
+            <div>
+            </div>
+        </div>
+        <table>
+                <tr>
+                    <th>id</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Costs</th>
+                </tr>
+                <tr v-for="unit in units" :key="unit.id" >
+                    <td> {{unit.id}}</td>
+                    <td>{{unit.name}}</td>
+                    <td>{{unit.age}}</td>
+                    <td v-for="cost in unit.cost" :key="cost"> {{cost}}</td>
+                </tr>
+            </table>
+    </div>
 </template>
-<script>
-  export default {
-    name: 'agelist',
-    computed: {
-      units() {
-        //return this.$store.getters.filterUnitsData("Feudal");
-        return this.$store.getters.filteredUnits;
-      },
-    },
-  };
-</script>
+<style lang="scss" scoped>
+    .filters {
+        display: flex;
 
-<style lang="scss">
-table,
+        &__unit {
+            padding-right: 8px;
+        }
+    }
+    .tables{
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        flex-direction: row;
+        &__.left{
+            flex: 2;
+        }
+        &__.right{
+            flex: 1;
+        }
+
+    }
+    table,
     td,
     th {
         border: 1px solid black;
     }
-table {
+
+    table {
         width: 100%;
         border-collapse: collapse;
 
@@ -80,3 +61,37 @@ table {
         }
     }
 </style>
+
+<script>
+    export default {
+        name: 'agelist',
+        data() {
+            return {
+
+            }
+        },
+
+        computed: {
+            units() {
+                return this.$store.state.units;
+            }
+        },
+        methods: {
+            addUnitSelection(unit) {
+                this.$store.commit("addUnitSelection", unit);
+            },
+            removeUnitSelection(unit) {
+                this.$store.commit("removeUnitSelection", unit);
+            },
+            isSelectedUnit(unit) {
+                return this.$store.getters.isSelectedUnit(unit);
+            }
+
+        },
+        mounted() {
+           this.$store.dispatch("getUnits");
+        }
+
+
+    }
+</script>

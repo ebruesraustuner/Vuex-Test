@@ -1,15 +1,43 @@
 <template>
-    <div>
-        <ul class="filter">
-            <li><a @click="filtered('')">All</a></li>
-            <li><a @click="filtered('Feudal')">Feudal</a></li>
-            <li><a @click="filtered('Feudal')">Ali</a></li>
-            <li><a @click="filtered('Feudal')">veli</a></li>
-            <li><a @click="filtered('49-50')">49 - 50</a></li>
+    <div class="units">
+        <h2>Ages</h2>
+        <ul class="Filters__Ages">
+            <li>
+                <a @click="filteredByAge('')">All</a></li>
+            <li v-for="age in ages" :key="age">
+                <a @click="filteredByAge(age)">{{age}}</a></li>
+
         </ul>
-        <div class="ages">
-            {{logs()}}
+        <h2>Costs</h2>
+        <div class="Filters__Costs">
+            <div class="CheckedBoxes">
+                <!-- v-for="cost in costs" :key="cost"  <input type="checkbox" id="wood" value="Wood" v-model="cost.name">
+                <label for="cost"> {{cost.name}}</label><br>
+-->
+                <!-- <input type="checkbox" id="test" value="test" v-model="isDisable">
+                <label for="test"> test</label><br> -->
+                <input type="checkbox" id="wood" value="Wood" v-model="isDisableWood">
+                <label for="Wood"> Wood</label><br>
+                <input type="checkbox" id="Food" value="Food" v-model="isDisableFood">
+                <label for="Food"> Food</label><br>
+                <input type="checkbox" id="Gold" value="Gold" v-model="isDisableGold">
+                <label for="Gold"> Gold</label><br>
+
+                 </div>
+            <div class="RangeSelectors">
+                <div class="sliders">
+                    <!-- <input type="range" id="slide" :disabled='!isDisable' min="0" max="200" class="slider"> -->
+
+                    <input type="range" :disabled='!isDisableWood' v-model="Wood" min="0" max="200" step="5" class="slider">
+                    <input type="range" :disabled='!isDisableFood' min="0" max="200" v-model="costsFood" step="5"
+                        class="slider">
+                    <input type="range" :disabled='!isDisableGold' min="0" max="200" v-model="costsGold" step="5"
+                        class="slider">
+                        cost wood  {{Wood}}  cost food {{costsFood}} cost gold {{costsGold}}
+                </div>
+            </div>
         </div>
+
         <div class="tables">
             <div class="tables__left">
                 <table>
@@ -20,8 +48,8 @@
                         <th>Costs- wood</th>
                         <th> costs - gold</th>
                     </tr>
-                    <tr :key="index" v-for="(item, index) in getUnits" @click="addUnitSelection(item)">
-                        <td v-if="!isSelectedUnit(item)" style="cursor:pointer" >
+                    <tr :key="index" v-for="(item, index) in units" @click="addUnitSelection(item)">
+                        <td v-if="!isSelectedUnit(item)" style="cursor:pointer">
                             {{item.id}}</td>
                         <td v-else style="cursor:pointer;" @click="removeUnitSelection(item)"> {{item.id}}
                             <small>[x]</small></td>
@@ -31,41 +59,80 @@
                     </tr>
 
                 </table>
-                <!-- <table>
-                    <tr>
-                        <th>id</th>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Costs</th>
-                    </tr>
-                    <tr v-for="unit in units" :key="unit.id">
-                        <td> {{unit.id}}</td>
-                        <td>{{unit.name}}</td>
-                        <td>{{unit.age}}</td>
-                        <td v-for="cost in unit.cost" :key="cost"> {{cost}}</td>
-                    </tr>
-                </table> -->
             </div>
             <div class="tables__right">
-                <agelist />
+                <unitlist />
             </div>
         </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-    ul.filter {
+.units {
+    width: 100%;
+    align-self: flex-start;
+
+    ul.Filters__Ages {
+        margin: 24px 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+
         li {
+            list-style: none;
+            border: 1px solid black;
+            background-color: fff;
+            padding: .25em;
+
             a {
                 cursor: pointer;
+                padding: .25em;
+                margin: .75em;
+                color: black;
             }
+
+        }
+
+        :hover {
+            background-color: #d3d3d3;
         }
     }
-    .filters {
-        display: flex;
 
-        &__unit {
-            padding-right: 8px;
+    .Filters__Costs {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+
+        .CheckedBoxes {
+            flex: 1;
+        }
+
+        .RangeSelectors {
+            flex: 2;
+
+            .sliders {
+                .slider {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 100%;
+                    height: 0px;
+                    background: #fff;
+                    border: 1px solid black;
+                    opacity: 0.7;
+                    -webkit-transition: .2s;
+                    transition: opacity .2s;
+                    outline: none;
+
+                    &:hover {
+                        opacity: 1;
+                        /* Fully shown on mouse-over */
+                    }
+
+                }
+
+            }
+
         }
     }
 
@@ -102,27 +169,88 @@
                 background-color: yellow;
             }
         }
-    }
+    }}
 </style>
 <script>
-    import agelist from './Agelist'
+    import unitlist from './Unitslist'
 
     export default {
         components: {
-            agelist
+            unitlist
         },
 
         data() {
-            return {
-                getUnits: {
-                    ...this.$store.state.units
-                }
-            }
+            return {}
         },
         computed: {
             units() {
-                return this.$store.state.units;
+                return this.$store.state.filterUnits;
             },
+            ages() {
+                return this.$store.state.ages;
+            },
+            isDisable: {
+                get() {
+                    return this.$store.state.isDisable
+                },
+                set(value) {
+                    this.$store.commit('updateCost', value)
+                }
+            },
+
+            isDisableWood: {
+                get() {
+                    return this.$store.state.isDisableWood
+                },
+                set(value) {
+
+                     this.$store.commit('updateCostWood', value)
+                }
+            },
+            isDisableFood: {
+                get() {
+                    return this.$store.state.isDisableFood
+                },
+                set(value) {
+                     this.$store.commit('updateCostFood', value)
+                },
+
+            },
+            isDisableGold: {
+                get() {
+                    return this.$store.state.isDisableGold
+                },
+                set(value) {
+                     this.$store.commit('updateCostGold', value)
+                }
+            },
+            Wood: {
+                get() {
+                    return this.$store.state.Wood
+                },
+                set(value) {
+                    this.$store.commit('filterCosts', value)
+                    this.$store.state.Wood = value
+                }
+            },
+             costsFood: {
+                get() {
+                    return this.$store.state.costsFood
+                },
+                set(value) {
+                    this.$store.state.costsFood = value
+                },
+                 
+            },
+            costsGold: {
+                get() {
+                    return this.$store.state.costsGold
+                },
+                set(value) {
+                    this.$store.state.costsGold = value
+                }
+            },
+
         },
         methods: {
             addUnitSelection(unit) {
@@ -134,14 +262,10 @@
             isSelectedUnit(unit) {
                 return this.$store.getters.isSelectedUnit(unit);
             },
-            filtered(filter) {
-                return this.getUnits = {...this.$store.getters.filterUnitsData(filter)};
-                //const unit = {...this.$store.getters.filterUnitsData(filter)};
-                //this.$store.commit("filterUpdateUnit", [unit]);
+            filteredByAge(filter) {
+                this.$store.commit("filterUpdateByAgeUnit", filter);
             },
-            logs() {
-                console.log(this.$store.state.units);
-            }
+
         },
         mounted() {
             this.$store.dispatch("getUnits");

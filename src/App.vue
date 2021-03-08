@@ -1,5 +1,5 @@
 <template>
-  <div id="nav">
+  <div class="navbar">
     <router-link to="/">Home</router-link> |
     <router-link to="/units">Units</router-link>
     <router-view></router-view>
@@ -8,17 +8,25 @@
 </template>
 
 <style lang="scss">
-
-#nav {
-  padding: 30px;
-
+.navbar {
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: flex-end;
+  
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: lightblue;
+    align-content: flex-end;
+  align-self: flex-end;
+  align-items: flex-end;
+  padding:0 8px;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: #4c92ed;
     }
   }
 }
+
 </style>
