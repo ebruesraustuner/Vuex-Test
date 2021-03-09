@@ -18,7 +18,6 @@ export default createStore({
     isDisableWood: false,
     isDisableFood: false,
     isDisableGold: false,
-
   },
   getters: {
     isSelectedUnit: (state) => (unit) => {
@@ -33,6 +32,13 @@ export default createStore({
         return
       }
     },
+    filteredCost: (state) => {
+      
+      return state.filteredUnitsByCost
+      
+     
+    }
+
   },
   mutations: {
     //first set units
@@ -59,17 +65,15 @@ export default createStore({
         state.filterName = null;
       }
     },
-    filterCosts (state, Wood, ){
+    filterCosts (state, Wood){
       state.Wood = Wood;
-     
+      state.filterUnits = state.units.filter((C) => C.id >= '100' );
+      state.filterName = Wood;      
       console.log("çalıştı");
-      if (Wood > 50 && Wood < 100 ) {
-        console.log("50 -100 ");
-        state.filterUnits = state.units.filter((C) => C.cost >= '100' );
-        state.filterName = Wood;
+      // if (Wood > 50 && Wood < 100 ) {
+      //   console.log("50 -100 ");
         
-        
-      }
+      // }
       // else if(Wood > 51 && Wood < 100) {
       //   console.log("50 den büyük 100 den küçük");
       //   state.filterUnits = state.units.filter( c => c.cost <= '50' && c.cost >= '100');
@@ -85,10 +89,10 @@ export default createStore({
       //   state.filterUnits = state.units.filter( c => c.cost <= '150');
       //   state.filterName = Wood;
       // }
-      else {
-        state.filterUnits = state.units;
-        state.filterName = null;
-      }
+      // else {
+      //   state.filterUnits = state.units;
+      //   state.filterName = null;
+      // }
       
     },
     //updateCost: (state, isDisable) => state.isDisable = !isDisable

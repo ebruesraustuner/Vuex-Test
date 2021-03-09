@@ -37,6 +37,10 @@
                 </div>
             </div>
         </div>
+        <div v-for="cost in costs" :key="cost">
+            {{cost}}
+
+        </div>
 
         <div class="tables">
             <div class="tables__left">
